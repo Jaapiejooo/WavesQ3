@@ -327,3 +327,34 @@ def wave_spectrum(data,nBlocks,Fs):
     confUpper  = edf/chi2.ppf(alpha/2,edf)
     
     return E,f,confLow,confUpper
+
+
+
+def spectral_parameter(f,E):
+
+    def spectral_moment(f, E, order):
+        return np.trapz(f**order * E, f)
+    
+    Tp = 1/f[np.argmax(E)]
+    m0 = spectral_moment(f,E,0)
+    m1 = spectral_moment(f,E,1)
+    m2 = spectral_moment(f,E,2)
+    m_1 = spectral_moment(f[1:],E[1:],-1)
+    Hm0 = 4* np.sqrt(m0)
+    Tm01 = m0/m1
+    Tm02 = np.sqrt(m0/m2)
+    Tm_10 = m_1/m0
+
+
+    return m0, Hm0, Tp, Tm01, Tm02, Tm_10
+
+def wave_param(H,T):
+    Hs = significant_wave_height(H)
+    Ts = period_13(H,T)
+    Hrms = rms_wave_height(H)
+    Hmax = max(H)
+    Tmax = T[np.argmax(H)]
+    Hmean = np.mean(H)
+    Tmean = np.mean(T)
+
+    return Hs, Ts, Hmax, Tmax, Hmean, Tmean, Hrms
